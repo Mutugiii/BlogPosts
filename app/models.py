@@ -1,6 +1,12 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from . import login_manager
 from datetime import datetime
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 class Quote:
     '''
@@ -15,7 +21,7 @@ class Quote:
         self.quote = quote
         self.permalink = permalink
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     '''
     Class for user schema
 
@@ -47,8 +53,8 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
 
-      def __repr__(self):
-          return f'User {self.username}'
+    def __repr__(self):
+        return f'User {self.username}'
 
 class BlogPost(db.Model):
     '''Class for Blog in db(column)'''
@@ -59,8 +65,8 @@ class BlogPost(db.Model):
     content = db.Column(db.String(), nullable = True)
     category = db.Column(db.String(255))
     post_pic_path = db.Column(db.String())
-    posted = db.Column(db.Datetime, default=datetime.utcnow)
-    updated = db.Column(db.Datetime, default=datetime.utcnow)
+    posted = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
@@ -74,8 +80,8 @@ class BlogPost(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-      def __repr__(self):
-          return f'BlogPost {self.title}'
+    def __repr__(self):
+        return f'BlogPost {self.title}'
 
 class Comment(db.Model):
     '''
@@ -85,7 +91,7 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     content = db.Column(db.String())
-    posted = db.Column(db.Datetime, default=datetime.utcnow)
+    posted = db.Column(db.DateTime, default=datetime.utcnow)
     post_id = db.Column(db.Integer, db.ForeignKey('blogposts.id'))
 
     def save_comment(self):
