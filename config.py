@@ -8,6 +8,8 @@ class DevConfig(Config):
     '''
     Class for dev configurations
     '''
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://mutugi:Mutugi@localhost/blog'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     DEBUG = True
 
 class ProdConfig(Config):
@@ -20,7 +22,7 @@ class TestConfig(Config):
     '''
     Class with configurations for test environment
     '''
-    pass
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://mutugu:Mutugi@localhost/blog_test'
 
 config_options = {
     'development': DevConfig,
