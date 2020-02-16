@@ -2,13 +2,13 @@ class Config:
     '''
     Config parent class that holds other general inheritable configurations
     '''
-    pass
+    API_URL='http://quotes.stormconsultancy.co.uk/random.json'
 
 class DevConfig(Config):
     '''
     Class for dev configurations
     '''
-    pass
+    DEBUG = True
 
 class ProdConfig(Config):
     '''
@@ -23,7 +23,7 @@ class TestConfig(Config):
     pass
 
 config_options = {
-        DevConfig: 'development',
-        ProdConfig: 'production',
-        TestConfig: 'Testing'
+    'development': DevConfig,
+    'production': ProdConfig,
+    'Testing': TestConfig
 }
