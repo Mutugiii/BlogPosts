@@ -11,25 +11,24 @@ def register():
     '''
     Function to register new users
     '''
-    errors = []
     if current_user.is_authenticated:
         return redirect('main.index')
     if request.method == 'POST':
         reg_form = request.form
         name = reg_form.get('username')
         if not name:
-            errors.append('Username must be entered')
+            flash('Username must be entered')
             return render_template('auth/register.html', errors = errors)
         passw = reg_form.get('password')
         if not passw:
-            errors.append('Password must be entered')
+            flash('Password must be entered')
             return render_template('auth/register.html', errors = errors)
         pass_confirm = reg_form.get('password_confirmation')
         if not pass_confirm:
-            errors.append('Password confirmatio must be entered')
+            flash('Password confirmatio must be entered')
             return render_template('auth/register.html', errors = errors)
         if pass_confirm != password:
-            errors.append('Passwords Must match')
+            flash('Passwords Must match')
             return render_template('auth/register.html', errors = errors)
         form = RegisterForm()
         if form.validate_on_submit():
@@ -54,11 +53,11 @@ def login():
         login_form = request.form
         name = login_form.get('username')
         if not name:
-            errors.append('Username must be entered')
+            flash('Username must be entered')
             return render_template('auth/login.html', errors = errors)
         passw = login_form.get('password')
         if not passw:
-            errors.append('Password must be entered')
+            flash('Password must be entered')
             return render_template('auth/login.html', errors = errors)
         form = LoginForm()
         if form.validate_on_submit():
