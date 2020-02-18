@@ -11,7 +11,7 @@ def register():
     Function to register new users
     '''
     if current_user.is_authenticated:
-        return redirect('main.index')
+        return redirect(url_for('main.index'))
     form = RegisterForm()
     if form.validate_on_submit():
         # Backend Validation
@@ -51,7 +51,7 @@ def login():
     Function to deal with user login 
     '''
     if current_user.is_authenticated:
-        return redirect('main.index')
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         # Backend Validation

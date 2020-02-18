@@ -7,6 +7,11 @@ class Config:
     API_URL='http://quotes.stormconsultancy.co.uk/random.json'
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
+    # Recaptcha Configurations
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+    RECAPTCHA_USE_SSL = False
+    RECAPTCHA_OPTIONS = {'theme':'clean'}
 class DevConfig(Config):
     '''
     Class for dev configurations
