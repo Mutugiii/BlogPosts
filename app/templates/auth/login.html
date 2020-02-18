@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}
 <title>Login</title>
@@ -18,7 +17,40 @@
                     {{ message }}
                 </div>
                 {% endfor %}
-                {{wtf.quick_form(form)}}
+                <form action="{{url_for('auth.login')}}" method="POST">
+                    {{ form.csrf_token(type_ = 'hidden') }}
+                    <div class="form-group">
+                        {% if form.email.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <span>
+                                {% for error in form.email.errors %}
+                                {{error}}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {{ form.email.label }} :
+                        {{ form.email(size=60) }}
+                    </div>
+                    <div class="form-group">
+                        {% if form.password.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <span>
+                                {% for error in form.password.errors %}
+                                {{error}}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {{ form.password.label }} :
+                        {{ form.password(size=60) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.remember.label }} <span style="margin-right: 30px;"></span>
+                        {{ form.remember(size=20, class_ = 'form-check-input') }}
+                    </div>
+                    {{ form.submit(size=20, class_ = 'btn btn-outline-primary') }}
+                </form>
                 <p> Don't have an account? <a href="{{url_for('auth.register')}}">Sign up here</a></p>
             </div>
         </div>

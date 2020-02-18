@@ -2,12 +2,10 @@ from flask import Flask
 from config import config_options
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 
 # Initizializations
 db = SQLAlchemy()
-bootstrap = Bootstrap()
 mail = Mail()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -26,7 +24,6 @@ def create_app(config_name):
     # Initizlizing extensions
     db.init_app(app)
     login_manager.init_app(app)
-    bootstrap.init_app(app)
     mail.init_app(app)
 
     # Registering Blueprints
@@ -34,7 +31,7 @@ def create_app(config_name):
     app.register_blueprint(main_blueprint)
 
     from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(auth_blueprint, url_prefix = '/authenticate')
 
     from .requests import configure_request
     configure_request(app)

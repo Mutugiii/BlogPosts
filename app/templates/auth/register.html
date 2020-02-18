@@ -1,5 +1,4 @@
 {% extends 'base.html'%}
-{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}
 <title>Register</title>
@@ -17,7 +16,66 @@
                 {{ message }}
             </div>
             {% endfor %}
-            {{wtf.quick_form(form)}}
+            <form action="{{url_for('auth.register')}}" method="POST">
+                <div class="form-group">
+                    {{ form.csrf_token(type_ = "hidden")}}
+                </div>
+                <div class="form-group">
+                    {% if form.email.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="error">
+                            {% for error in form.email.errors %}
+                            {{error}}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {{ form.email.label}}
+                    {{ form.email(class_="form-control") }}
+                </div>
+                <div class="form-group">
+                    {% if form.username.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="error">
+                            {% for error in form.username.errors %}
+                            {{error}}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {{ form.username.label }}
+                    {{ form.username(class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {% if form.password.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="error">
+                            {% for error in form.password.errors %}
+                            {{error}}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {{ form.password.label }}
+                    {{ form.password(class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {% if form.password_confirmation.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="error">
+                            {% for error in form.password_confirmation.errors %}
+                            {{error}}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {{form.password_confirmation.label}}
+                    {{ form.password_confirmation(class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class_="btn btn-outline-primary")}}
+                </div>
+            </form>
             <p> Already have an account? <a href="{{url_for('auth.login')}}">Log in here</a></p>
 
 
