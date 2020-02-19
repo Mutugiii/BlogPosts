@@ -2,7 +2,7 @@ from . import main
 from flask import render_template, abort, redirect, url_for, request, flash
 from ..requests import get_quote
 from ..models import User, BlogPost, Comment
-from .forms import UpdateUserProfile, BlogPostForm
+from .forms import UpdateUserProfile, BlogPostForm, CommentForm
 from flask_login import login_required, current_user
 from .. import photos
 from datetime import datetime
@@ -11,17 +11,21 @@ from datetime import datetime
 def index():
     '''Main index route'''
     quotes = get_quote()
-    return render_template('index.html', quotes = quotes)
+
+    latest_blogs = Blog.query.order_by(db.desc(Blog.created_at)).limit(3).all()
+    all_blogs = Blog.query.all()
+    return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs)
 
 @main.route('/profile/<uname>')
 def profile(uname):
     '''Route to the User Profile'''
     user = User.query.filter_by(username = uname).first()
+    posts = BlogPost.query.filter_by(user_id = user.id).all()
 
     if user is None:
         abort(404)
         
-    return render_template('profile/profile.html', user = user)
+    return render_template('profile/profile.html', user = user, posts = posts)
 
 @main.route('/profile/<uname>/update', methods=['GET','POST'])
 @login_required
@@ -96,6 +100,7 @@ def new_post(uname):
     return render_template('post/post.html', form = form)
 
 @main.route('/post/delete/<pitch_id>', methods = ['GET', 'POST'])
+@login_required
 def delete_post(pitch_id):
     '''Function to delete a post'''
     post = BlogPost.query.filter_by(id = pitch_id).first()
@@ -108,11 +113,11 @@ def delete_post(pitch_id):
         abort(404)
 
     post.delete_post()
-    flash('Post Deleted')
 
     return redirect(url_for('.index'))
 
 @main.route('/post/update/<post_id>', methods = ['GET', 'POST'])
+@login_required
 def update_post(post_id):
     '''Function to update the Post'''
     post = BlogPost.query.filter_by(id = pitch_id).first()
@@ -149,10 +154,42 @@ def update_post(post_id):
 @login_required
 def post_comment(post_id):
     '''Function to post a comment on a post'''
+    post = BlogPost.query.filter_by(id = post_id).first()
+    form = CommentForm()
 
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            comment_form = request.form
+            form_content = comment_form.Content
+            if not form_content:
+                flash('Comment must be provided')
+                return redirect(url_for('.view_post', post_id = post.id))
+
+    return render_template('post/comment.html', form = form)
+
+
+@main.route('/post/comment/delete/<post_id>')
+@login_required
+def delete_comment(post_id):
+    '''Function to delete a comment'''
+    post = BlogPost.query.filter_by(id = post_id).first()
+    comment = Comment.query.filter_by(post_id = post.id).first()
+    user = User.query.filter_by(id = post.user_id).first()
+
+    if user is None:
+        abort(404)
+    
+    if user.user_role == 'user':
+        abort(404)
+
+    comment.delete_comment()
+
+    return redirect(url_for(.index))
 
 @main.route('/post/view/<post_id>')
-def view_post():
+def view_post(post_id):
     '''Function to view a specific post'''
     post = BlogPost.query.filter_by(id = post_id).first()
-    comments = Comment.query.filter_by()
+    comments = Comment.query.filter_by(post_id = post_id).all()
+
+    return render_template('post/specific_post.html', comments = comments, post = post)
