@@ -6,6 +6,7 @@ from .forms import UpdateUserProfile, BlogPostForm, CommentForm
 from flask_login import login_required, current_user
 from .. import photos
 from datetime import datetime
+from ..email import mailer
 
 @main.route('/')
 def index():
@@ -97,6 +98,10 @@ def new_post(uname):
             blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id)
             blog.save_post()
 
+            blog = BlogPost.query.filter_by(user_id = user.id).first()
+            mailer('New Post Notification!!!', 'email/notification', user.email, user = user, blog = blog)
+
+            return redirect(url_for('.index'))
     return render_template('post/post.html', form = form)
 
 @main.route('/post/delete/<pitch_id>', methods = ['GET', 'POST'])
