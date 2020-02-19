@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
-
+{% import 'macros.html' as macro %}
 {% block title%}
+{{ super() }}
 <title>Blog | Home</title>
+<link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+{{ moment.include_moment() }}
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <p>Hello World</p>
+<div class="quotesdisplay sticky-top container-fluid">
     {{quotes.quote}} <br>
-    {{quotes.author}}
+    By {{quotes.author}}
+</div>
+<div class="container">
+    {{macro.displayLatest(latest)}}
+    {{macro.displayPosts(all)}}
 </div>
 {% endblock %}

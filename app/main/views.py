@@ -4,7 +4,7 @@ from ..requests import get_quote
 from ..models import User, BlogPost, Comment
 from .forms import UpdateUserProfile, BlogPostForm, CommentForm
 from flask_login import login_required, current_user
-from .. import photos
+from .. import photos,db
 from datetime import datetime
 from ..email import mailer
 
@@ -13,8 +13,8 @@ def index():
     '''Main index route'''
     quotes = get_quote()
 
-    latest_blogs = Blog.query.order_by(db.desc(Blog.created_at)).limit(3).all()
-    all_blogs = Blog.query.all()
+    latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).limit(3).all()
+    all_blogs = BlogPost.query.all()
     return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs)
 
 @main.route('/profile/<uname>')
@@ -67,6 +67,18 @@ def update_picture(uname):
         user.save()
     return redirect(url_for('main.profile',uname = uname))
 
+@main.route('/subscribe/<email>')
+@login_required
+def subscribe(email):
+    '''Function to subscribe to mailing list'''
+    user = User.query.filter_by(email = email).first()
+
+    user = User(subscribed = True)
+    user.save_user()
+
+    flash('Thank you for subscribing!')
+    return redirect(url_for('.index'))
+
 @main.route('/post/new/<uname>', methods = ['GET', 'POST'])
 @login_required
 def new_post(uname):
@@ -98,8 +110,9 @@ def new_post(uname):
             blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id)
             blog.save_post()
 
-            blog = BlogPost.query.filter_by(user_id = user.id).first()
-            mailer('New Post Notification!!!', 'email/notification', user.email, user = user, blog = blog)
+            if user.subscribed == True:
+                blog = BlogPost.query.filter_by(user_id = user.id).first()
+                mailer('New Post Notification!!!', 'email/notification', user.email, user = user, blog = blog)
 
             return redirect(url_for('.index'))
     return render_template('post/post.html', form = form)
@@ -118,7 +131,7 @@ def delete_post(pitch_id):
         abort(404)
 
     post.delete_post()
-
+    flash('Post successfully deleted')
     return redirect(url_for('.index'))
 
 @main.route('/post/update/<post_id>', methods = ['GET', 'POST'])
@@ -189,7 +202,7 @@ def delete_comment(post_id):
 
     comment.delete_comment()
 
-    return redirect(url_for(.index))
+    return redirect(url_for('.index'))
 
 @main.route('/post/view/<post_id>')
 def view_post(post_id):

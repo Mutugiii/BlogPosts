@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from flask_mail import Mail
+from flask_moment import Moment
 
 # Initizializations
 db = SQLAlchemy()
@@ -12,6 +13,7 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 photos = UploadSet('photos', IMAGES)
+moment = Moment()
 
 # Application Factory
 def create_app(config_name):
@@ -28,6 +30,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     mail.init_app(app)
     configure_uploads(app,photos)
+    moment.init_app(app)
 
     # Registering Blueprints
     from .main import main as main_blueprint
