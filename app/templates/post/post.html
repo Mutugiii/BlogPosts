@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<title>Update Profile</title>
+<title>Post</title>
 {% endblock %}
 
 {% block content %}
@@ -18,10 +18,10 @@
                     {{ message }}
                 </div>
                 {% endfor %}
-                <form action="{{url_for('main.update_profile', uname = current_user.username)}}" method="POST">
+                <form action="{{url_for('main.new_post', uname = current_user.username)}}" method="POST" enctype="multipart/form-data">
                     {{form.csrf_token(type_ ='hidden')}}
                     <div class="form-group">
-                        {% if form.bio.errors %}
+                        {% if form.title.errors %}
                         <div class="alert alert-danger" role="alert">
                             <span class="error">
                                 {% for error in errors %}
@@ -30,8 +30,25 @@
                             </span>
                         </div>
                         {% endif %}
-                        {{form.bio.label}}:
-                        {{form.bio(class_ = 'form-control')}}
+                        {{form.title.label}}:
+                        {{form.title(class_ = 'form-control')}}
+                    </div>
+                    <div class="form-group">
+                        {% if form.blogcontent.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <span class="error">
+                                {% for error in errors %}
+                                {{error}}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {{form.blogcontent.label}}:
+                        {{form.blogcontent(class_ = 'form-control')}}
+                    </div>
+                    <div class="btn btn-outline-primary btn-rounded waves-effect">
+                        <span>Upload Profile Photo<i class="fas fa-cloud-upload-alt ml-3" aria-hidden="true"></i></span>
+                        <input type="file" name="photo" class='btn btn-primary'>
                     </div>
                     <div class="form-group">
                         {{form.submit(class_ = 'btn btn-outline-primary')}}

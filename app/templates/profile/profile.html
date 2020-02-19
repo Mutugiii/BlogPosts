@@ -34,18 +34,32 @@
             No bio present
             {% endif %}
             {% if user == current_user %}
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
             <div>
                 <a href="{{url_for('main.update_profile', uname = current_user.username)}}">Edit profile</a>
             </div>
+            <br><br>
+            <div class="row">
+                <form action="{{url_for('main.update_picture',uname = user.username)}}" method="post"
+                    enctype="multipart/form-data" class="container row">
+                    <div class="btn btn-outline-primary btn-rounded waves-effect" class="col-md-4">
+                        <span>Upload Profile Photo<i class="fas fa-cloud-upload-alt ml-3" aria-hidden="true"></i></span>
+                        <input type="file" name="photo" class='btn btn-primary' required>
+                    </div>
+                    <div class="file-path-wrapper col-md-4">
+                        <input type="submit" class="btn btn-outline-primary" value="Upload">
+                    </div>
+                </form>
+            </div>
             {% endif %}
         </div>
-        <div class="col-md-6"></div>
     </div>
-</div>
 
-<!-- mdbootstrap -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-<script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
-{% endblock %}
+    <!-- mdbootstrap -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
+    {% endblock %}

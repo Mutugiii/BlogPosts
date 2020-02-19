@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(255),unique = True, nullable = False)
     bio = db.Column(db.String())
     profile_pic_path = db.Column(db.String())
-    role = db.Column(db.String, default='user')
+    role = db.Column(db.String, default='user', nullable = False)
     blogs = db.relationship('BlogPost', backref='user', lazy = 'dynamic')
     password = db.Column(db.String(), nullable = False)
 
@@ -64,7 +64,6 @@ class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(255), nullable = False)
     content = db.Column(db.String(), nullable = True)
-    category = db.Column(db.String(255))
     post_pic_path = db.Column(db.String())
     posted = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, default=datetime.utcnow)
