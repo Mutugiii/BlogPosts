@@ -66,7 +66,7 @@ class BlogPost(db.Model):
     content = db.Column(db.String(), nullable = True)
     post_pic_path = db.Column(db.String())
     posted = db.Column(db.DateTime, default=datetime.utcnow)
-    updated = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 

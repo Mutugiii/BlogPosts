@@ -5,6 +5,7 @@ from ..models import User, BlogPost, Comment
 from .forms import UpdateUserProfile, BlogPostForm
 from flask_login import login_required, current_user
 from .. import photos
+from datetime import datetime
 
 @main.route('/')
 def index():
@@ -89,7 +90,69 @@ def new_post(uname):
                 filename = photos.save(request.files['photo'])
                 path = f'photos/{filename}'
 
-            blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path)
+            blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id)
             blog.save_post()
 
     return render_template('post/post.html', form = form)
+
+@main.route('/post/delete/<pitch_id>', methods = ['GET', 'POST'])
+def delete_post(pitch_id):
+    '''Function to delete a post'''
+    post = BlogPost.query.filter_by(id = pitch_id).first()
+    user = User.query.filter_by(id = post.user_id).first()
+
+    if user is None:
+        abort(404)
+    
+    if user.user_role == 'user':
+        abort(404)
+
+    post.delete_post()
+    flash('Post Deleted')
+
+    return redirect(url_for('.index'))
+
+@main.route('/post/update/<post_id>', methods = ['GET', 'POST'])
+def update_post(post_id):
+    '''Function to update the Post'''
+    post = BlogPost.query.filter_by(id = pitch_id).first()
+    user = User.query.filter_by(id = post.user_id).first()
+
+    if user is None:
+        abort(404)
+    
+    if user.user_role == 'user':
+        abort(404)
+    
+    form = BlogPostForm()
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            blog_form = request.form
+            blog_title = blog_form.get('title')
+            if not blog_title:
+                flash('Blog Post Title MUST be provided!')
+                return redirect(url_for('.new_post', uname =user.username))
+            blog_content = blog_form.get('blogcontent')
+            if not blog_content:
+                flash('Blog Post Content MUST be provided!')
+                return redirect(url_for('.new_post', uname = user.username))
+            if 'photo' in request.files:
+                filename = photos.save(request.files['photo'])
+                path = f'photos/{filename}'
+
+            blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id, updated = datetime.utcnow)
+            blog.save_post()
+
+    return render_template('post/post.html', form = form)
+
+@main.route('/post/comment/<post_id>', methods = ['GET', 'POST'])
+@login_required
+def post_comment(post_id):
+    '''Function to post a comment on a post'''
+
+
+@main.route('/post/view/<post_id>')
+def view_post():
+    '''Function to view a specific post'''
+    post = BlogPost.query.filter_by(id = post_id).first()
+    comments = Comment.query.filter_by()
