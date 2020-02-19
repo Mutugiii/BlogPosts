@@ -1,0 +1,4 @@
+Hello {{user.username}}
+
+Welcome to Microblog, Thanks for signing up and welcome to the family,
+We hope that you will enjoy using our application

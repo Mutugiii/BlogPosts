@@ -12,6 +12,16 @@ class Config:
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     RECAPTCHA_USE_SSL = False
     RECAPTCHA_OPTIONS = {'theme':'clean'}
+
+    # Flask Uploads destination
+    UPLOADED_PHOTOS_DEST ='app/static/photos'
+
+    # Mail Configurations
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 class DevConfig(Config):
     '''
     Class for dev configurations

@@ -4,6 +4,7 @@ from .forms import RegisterForm,LoginForm
 from ..models import User
 from flask_login import login_user,logout_user,login_required, current_user
 from .. import db
+from ..email import mailer
 
 @auth.route('/register', methods = ['GET','POST'])
 def register():
@@ -39,7 +40,8 @@ def register():
             user = User(email = form.email.data, username = form.username.data)
             user.set_password(form.password.data)
             user.save_user()
-    
+
+            mailer('Welcome to Microblog', 'email/welcome', user.email, user = user)
             return redirect(url_for('auth.login'))
             flash('Thank you for signing up!')
 
