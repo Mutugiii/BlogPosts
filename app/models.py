@@ -65,7 +65,6 @@ class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(255), nullable = False)
     content = db.Column(db.String(), nullable = True)
-    post_pic_path = db.Column(db.String())
     posted = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

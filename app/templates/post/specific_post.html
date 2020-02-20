@@ -3,56 +3,87 @@
 {% block title %}
 {{super()}}
 <title>Post</title>
-{{ moment.include_moment() }}
+<script>
+    { { moment.include_moment() } }
+</script>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
             <br>
             <div class="container-fluid">
                 <div class="container">
+                    {% for message in get_flashed_messages() %}
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
                     <div class="col-md-12">
-                        {% if post.post_pic_path %}
-                        <img src="{{url_for('static', filename=post.post_pic_path)}}" width="500px" height="500px">
-                        {% else %}
-                        <img
-                            src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-                        {% endif %}
+                        <img src="https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                            height="400px" width="600px">
                         <br>
-                        <h5 class="card-title">{{post.title}}</h5>
-                        <span class="card-text">Author: {{post.user.username}}</span>
+                        <h5 class="card-title text-center text-underline">{{post.title}}</h5>
+                        <div class="row">
+                            <span class="card-text col-md-8">Author: {{post.user.username}}</span>
+                            <br>
+                            <small class="card-text col-md-4">Posted: {{post.posted}}</small>
+                        </div>
                         <br>
-                        <small class="card-text">Posted {{moment(post.posted).fromNow()}}</small>
                         <p class="card-text">{{post.content | truncate(1000)}}</p>
-                        <br>
-                        
+                        <hr
+                            style="height:1px;border:none;color:rgb(145, 140, 140);background-color:#333;width: 630px;" />
+                        {% if current_user.role == 'writer' %}
                         <div class="row" style="color: #2b3137;">
                             <div class="col-md-6">
-                                <a class="card-text" href="{{url_for('main.update_post', post_id = post.id)}}">
+                                <a class="card-text"
+                                    href="{{url_for('main.update_post', post_id = post.id, user_id = current_user.id)}}">
                                     <input type="submit" class="btn btn-outline-primary" value="Update Post"></a>
                             </div>
                             <div class="col-md-6">
-                                <a class="card-text" href="{{url_for('main.delete_post', post_id = post.id)}}">
+                                <a class="card-text"
+                                    href="{{url_for('main.delete_post', post_id = post.id, user_id = current_user.id)}}">
                                     <input type="submit" class="btn btn-outline-primary" value="Delete Post"></a>
                             </div>
                         </div>
-                        
-                        <hr>
-                        <h5>Comments</h5>
+                        {% endif %}
+
+                        <hr
+                            style="height:1px;border:none;color:rgb(145, 140, 140);background-color:#333;width: 630px;" />
+                        <h5 class="text-center">Comments</h5>
                         <div class="container">
                             {% for comment in comments %}
-                            <p>{{comment.content}}</p>
-                            <p>{{moment(comment.posted).calendar()}}</p>
+                            <hr
+                                style="height:1px;border:none;color:rgb(145, 140, 140);background-color:#333;width: 600px;" />
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <span>{{comment.content}}</span>
+                                    <small>{{comment.posted}}</small>
+                                    <br>
+                                    <span>By {{comment.post.user.username}}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    {% if current_user.role == 'writer' %}
+                                    <a
+                                        href="{{url_for('main.delete_comment', post_id = post.id, user_id = current_user.id)}}">
+                                        Delete Comment
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <hr
+                                    style="height:1px;border:none;color:rgb(145, 140, 140);background-color:#333;width: 600px;" />
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-2"></div>
     </div>
 </div>
 {% endblock %}

@@ -7,6 +7,7 @@ from flask_login import login_required, current_user
 from .. import photos,db
 from datetime import datetime
 from ..email import mailer
+from dateutil.parser import parse
 
 @main.route('/')
 def index():
@@ -14,9 +15,7 @@ def index():
     quotes = get_quote()
     latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).first()
     all_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).all()
-    user = BlogPost.query.filter_by(user_id = latest_blogs.user_id).first()
-    print(user)
-    return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs, user = user)
+    return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs)
 
 @main.route('/profile/<uname>')
 def profile(uname):
@@ -109,11 +108,8 @@ def new_post(uname):
             if not blog_content:
                 flash('Blog Post Content MUST be provided!')
                 return redirect(url_for('.new_post', uname = user.username))
-            if 'photo' in request.files:
-                filename = photos.save(request.files['photo'])
-                path = f'photos/{filename}'
 
-            blog = BlogPost(title = form.title.data, content = form.blogcontent.data, post_pic_path = path, user_id = current_user.id)
+            blog = BlogPost(title = form.title.data, content = form.blogcontent.data, user_id = current_user.id)
             blog.save_post()
 
             users = User.query.all()
@@ -125,12 +121,12 @@ def new_post(uname):
             return redirect(url_for('.index'))
     return render_template('post/post.html', form = form)
 
-@main.route('/post/delete/<post_id>', methods = ['GET', 'POST'])
+@main.route('/post/delete/<post_id>/<user_id>', methods = ['GET', 'POST'])
 @login_required
-def delete_post(post_id):
+def delete_post(post_id, user_id):
     '''Function to delete a post'''
     post = BlogPost.query.filter_by(id = post_id).first()
-    user = User.query.filter_by(id = post.user_id).first()
+    user = User.query.filter_by(id = user_id).first()
 
     if user is None:
         abort(404)
@@ -139,24 +135,35 @@ def delete_post(post_id):
         flash('Only Writers can delete posts')
         return redirect(url_for('main.index'))
         abort(404)
+    
+    if user.id != post.user_id:
+        flash('Only the original Writer can delete their posts')
+        return redirect(url_for('.view_post', post_id = post_id))
+        abort(404)
 
     post.delete_post()
     flash('Post successfully deleted')
     return redirect(url_for('.index'))
 
-@main.route('/post/update/<post_id>', methods = ['GET', 'POST'])
+@main.route('/post/update/<post_id>/<user_id>', methods = ['GET', 'POST'])
 @login_required
-def update_post(post_id):
+def update_post(post_id, user_id):
     '''Function to update the Post'''
-    post = BlogPost.query.filter_by(id = post_id).first()
-    user = User.query.filter_by(id = post.user_id).first()
+    post_fetched = BlogPost.query.filter_by(id = post_id).first()
+    user = User.query.filter_by(id = user_id).first()
 
+    print(post_fetched)
     if user is None:
         abort(404)
     
     if user.role == 'user':
         flash('Only Writers can Update posts')
-        return redirect(url_for('main.view_post', post_id = post.id))
+        return redirect(url_for('main.index', post_id = post.id))
+        abort(404)
+    
+    if user.id != post_fetched.user_id:
+        flash('Only the original Writer can delete their posts')
+        return redirect(url_for('.view_post', post_id = post_id))
         abort(404)
     
     form = BlogPostForm()
@@ -171,16 +178,14 @@ def update_post(post_id):
             if not blog_content:
                 flash('Blog Post Content MUST be provided!')
                 return redirect(url_for('.new_post', uname = user.username))
-            if 'photo' in request.files:
-                filename = photos.save(request.files['photo'])
-                path = f'photos/{filename}'
 
-            post.title = form.title.data
-            post.content = form.content.data
-            post.post_pic_path = path
-            post.user_id = current_user.id
-            post.updated = datetime.utcnow
-            post.save_post()
+            post_fetched.title = form.title.data
+            post_fetched.content = form.content.data
+            post_fetched.user_id = current_user.id
+            post_fetched.updated = datetime.utcnow
+            db.session.commit()
+
+            return redirect(url_for('main.index'))
 
     return render_template('post/post.html', form = form)
 
@@ -205,23 +210,30 @@ def post_comment(post_id):
     return render_template('post/comment.html', form = form, post = post)
 
 
-@main.route('/post/comment/delete/<post_id>')
+@main.route('/post/comment/delete/<post_id>/<user_id>')
 @login_required
-def delete_comment(post_id):
+def delete_comment(post_id, user_id):
     '''Function to delete a comment'''
     post = BlogPost.query.filter_by(id = post_id).first()
     comment = Comment.query.filter_by(post_id = post.id).first()
-    user = User.query.filter_by(id = post.user_id).first()
+    user = User.query.filter_by(id = user_id).first()
 
     if user is None:
         abort(404)
     
     if user.role == 'user':
         flash('Only Writers can delete comments on posts')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('.view_post', post_id = post_id))
+        abort(404)
+
+    if user.id != post.user_id:
+        flash('Only the original Writer can delete comments on posts')
+        return redirect(url_for('.view_post', post_id = post_id))
         abort(404)
 
     comment.delete_comment()
+    return redirect(url_for('.view_post', post_id = post_id))
+    flash('Comment succesfully deleted')
 
     return redirect(url_for('.index'))
 
@@ -230,7 +242,5 @@ def view_post(post_id):
     '''Function to view a specific post'''
     post = BlogPost.query.filter_by(id = post_id).first()
     comments = Comment.query.filter_by(post_id = post_id).all()
-    user = BlogPost.query.filter_by(user_id = post.user_id).first()
-    print(user)
-
-    return render_template('post/specific_post.html', comments = comments, post = post, user = user)
+    
+    return render_template('post/specific_post.html', comments = comments, post = post)

@@ -5,7 +5,6 @@
 <title>Blog | Home</title>
 <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
 {{ moment.include_moment() }}
-{{ moment.include_jquery() }}
 {% endblock %}
 
 {% block content %}
@@ -26,29 +25,26 @@
     <img src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
         width="1100px" height="500px">
 
-
+    {% if current_user.role == 'writer' %}
     <div style="text-align: center;">
         <a href="{{url_for('main.new_post', uname = current_user.username)}}">
             <input type="submit" value="Submit a Pitch" class="btn btn-outline-primary">
         </a>
     </div>
+    {% endif %}
 
     <div class="container">
         {% for post in all %}
         <div class="container">
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
-            {% if post.post_pic_path %}
-            <img src="{{url_for('static', filename=post.post_pic_path)}}" height="250px" width="700px">
-            {% else %}
-            <img src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+            <img src="https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
                 height="200px" width="500px">
-            {% endif %}
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
             <h5>{{post.title}}</h5>
             <div class="row">
                 <span class="col-md-8">Author: {{post.user.username}}</span>
                 <br>
-                <small class="col-md-4">Posted {{post.posted}}</small>
+                <small class="col-md-4">Posted: {{post.posted}}</small>
             </div>
             <p>{{post.content | truncate(1000)}}</p>
             <br>

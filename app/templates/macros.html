@@ -3,26 +3,31 @@
 <div class="container">
     <div class="card w-100">
         <div class="container row">
-            <div class="col-md-4">
-                {% if post.post_pic_path %}
-                <img src="{{url_for('static', filename=post.post_pic_path)}}">
-                {% else %}
-                <img
-                    src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-                {% endif %}
-            </div>
-            <div class="col-md-8">
-                <h4>{{post.title}}</h4>
-                <small>{{post.user.username}}</small>
-                <small>Posted {{moment(post.posted).fromNow()}}</small>
+            <div class="col-md-12">
+                <h4 class="text-center">{{post.title}}</h4>
+                <div class="row">
+                    <small class="col-md-4">{{post.user.username}}</small>
+                    <small class="col-md-8">Posted {{post.posted}}</small>
+                </div>
                 {% if post.updated %}
-                <small>Last Updated {{moment(post.updated).fromNow()}}</small>
+                <small>Last Updated {{post.updated}}</small>
                 {% endif %}
                 <p>{{post.content | truncate(1000)}}</p>
+                <div class="row" style="color: #2b3137;">
+                    <div class="col-md-6">
+                        <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
+                            Comment</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{url_for('main.view_post', post_id = post.id)}}">View
+                            details</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<br>
 {% endfor %}
 {% endmacro %}
 
@@ -31,20 +36,17 @@
 {% macro displayPosts(posts) %}
 {% for post in posts %}
 <div class="container">
-        <div class="card" style="width: 18rem;">
-            {% if post.post_pic_path %}
-            <img  class='card-img-top' src="{{url_for('static', filename=post.post_pic_path)}}">
-            {% else %}
-            <img class='card-img-top'
-                src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{post.title}}</h5>
-                <small class="card-text">{{post.user.username}}</small>
-                <small class="card-text">Posted {{moment(post.posted).fromNow()}}</small>
-                <p class="card-text">{{post.content | truncate(1000)}}</p>
-            </div>
+    <div class="card" style="width: 18rem;">
+        <img class='card-img-top'
+            src="https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+        <div class="card-body">
+            <h5 class="card-title">{{post.title}}</h5>
+            <small class="card-text">{{post.user.username}}</small>
+            <small class="card-text">Posted {{post.posted}}</small>
+            <p class="card-text">{{post.content | truncate(1000)}}</p>
+        </div>
     </div>
 </div>
+
 {% endfor %}
 {% endmacro %}
