@@ -15,6 +15,7 @@ def index():
     latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).first()
     all_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).all()
     user = BlogPost.query.filter_by(user_id = latest_blogs.user_id).first()
+    print(user)
     return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs, user = user)
 
 @main.route('/profile/<uname>')
@@ -79,6 +80,7 @@ def subscribe(email):
     flash('Thank you for subscribing!')
     return redirect(url_for('.index'))
 
+@main.route('/post/new/')
 @main.route('/post/new/<uname>', methods = ['GET', 'POST'])
 @login_required
 def new_post(uname):
@@ -86,6 +88,8 @@ def new_post(uname):
     user = User.query.filter_by(username = uname).first()
 
     if user is None:
+        flash('Sign in to post a pitch')
+        return redirect(url_for('auth.login'))
         abort(404)
     
     if user.role == 'user':
@@ -227,5 +231,6 @@ def view_post(post_id):
     post = BlogPost.query.filter_by(id = post_id).first()
     comments = Comment.query.filter_by(post_id = post_id).all()
     user = BlogPost.query.filter_by(user_id = post.user_id).first()
+    print(user)
 
     return render_template('post/specific_post.html', comments = comments, post = post, user = user)
