@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2de09871f663
+Revision ID: 23461e904caa
 Revises: 
-Create Date: 2020-02-16 22:53:06.243588
+Create Date: 2020-02-20 11:31:04.742002
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2de09871f663'
+revision = '23461e904caa'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,8 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('bio', sa.String(), nullable=True),
     sa.Column('profile_pic_path', sa.String(), nullable=True),
+    sa.Column('subscribed', sa.Boolean(), nullable=False),
+    sa.Column('role', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
@@ -32,7 +34,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('content', sa.String(), nullable=True),
-    sa.Column('category', sa.String(length=255), nullable=True),
     sa.Column('post_pic_path', sa.String(), nullable=True),
     sa.Column('posted', sa.DateTime(), nullable=True),
     sa.Column('updated', sa.DateTime(), nullable=True),

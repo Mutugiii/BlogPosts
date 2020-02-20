@@ -37,7 +37,7 @@ def register():
                 flash('Passwords Must match')
                 return redirect(url_for('auth.register'))
 
-            user = User(email = form.email.data, username = form.username.data)
+            user = User(email = form.email.data, username = form.username.data, role = form.user_role.data)
             user.set_password(form.password.data)
             user.save_user()
 
@@ -80,4 +80,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return render_template('index.html')
+    return redirect(url_for('main.index'))

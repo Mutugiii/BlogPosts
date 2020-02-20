@@ -12,10 +12,10 @@ from ..email import mailer
 def index():
     '''Main index route'''
     quotes = get_quote()
-
-    latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).limit(3).all()
+    latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).first()
     all_blogs = BlogPost.query.all()
-    return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs)
+    user = BlogPost.query.filter_by(user_id = latest_blogs.user_id).first()
+    return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs, user = user)
 
 @main.route('/profile/<uname>')
 def profile(uname):
@@ -64,7 +64,7 @@ def update_picture(uname):
         filename = photos.save(request.files['photo'])
         path = f'photos/{filename}'
         user.profile_pic_path = path
-        user.save()
+        user.save_user()
     return redirect(url_for('.profile',uname = uname))
 
 @main.route('/subscribe/<email>')
@@ -73,7 +73,7 @@ def subscribe(email):
     '''Function to subscribe to mailing list'''
     user = User.query.filter_by(email = email).first()
 
-    user = User(subscribed = True)
+    user.subscribed = True
     user.save_user()
 
     flash('Thank you for subscribing!')
@@ -88,7 +88,9 @@ def new_post(uname):
     if user is None:
         abort(404)
     
-    if user.user_role == 'user':
+    if user.role == 'user':
+        flash('Only Writers can create posts')
+        return redirect(url_for('main.index'))
         abort(404)
 
     form = BlogPostForm()
@@ -107,7 +109,7 @@ def new_post(uname):
                 filename = photos.save(request.files['photo'])
                 path = f'photos/{filename}'
 
-            blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id)
+            blog = BlogPost(title = form.title.data, content = form.blogcontent.data, post_pic_path = path, user_id = current_user.id)
             blog.save_post()
 
             if user.subscribed == True:
@@ -117,17 +119,19 @@ def new_post(uname):
             return redirect(url_for('.index'))
     return render_template('post/post.html', form = form)
 
-@main.route('/post/delete/<pitch_id>', methods = ['GET', 'POST'])
+@main.route('/post/delete/<post_id>', methods = ['GET', 'POST'])
 @login_required
-def delete_post(pitch_id):
+def delete_post(post_id):
     '''Function to delete a post'''
-    post = BlogPost.query.filter_by(id = pitch_id).first()
+    post = BlogPost.query.filter_by(id = post_id).first()
     user = User.query.filter_by(id = post.user_id).first()
 
     if user is None:
         abort(404)
     
-    if user.user_role == 'user':
+    if user.role == 'user':
+        flash('Only Writers can delete posts')
+        return redirect(url_for('main.index'))
         abort(404)
 
     post.delete_post()
@@ -138,13 +142,15 @@ def delete_post(pitch_id):
 @login_required
 def update_post(post_id):
     '''Function to update the Post'''
-    post = BlogPost.query.filter_by(id = pitch_id).first()
+    post = BlogPost.query.filter_by(id = post_id).first()
     user = User.query.filter_by(id = post.user_id).first()
 
     if user is None:
         abort(404)
     
-    if user.user_role == 'user':
+    if user.role == 'user':
+        flash('Only Writers can Update posts')
+        return redirect(url_for('main.view_post', post_id = post.id))
         abort(404)
     
     form = BlogPostForm()
@@ -163,8 +169,12 @@ def update_post(post_id):
                 filename = photos.save(request.files['photo'])
                 path = f'photos/{filename}'
 
-            blog = BlogPost(title = form.title.data, content = form.content.data, post_pic_path = path, user_id = current_user.id, updated = datetime.utcnow)
-            blog.save_post()
+            post.title = form.title.data
+            post.content = form.content.data
+            post.post_pic_path = path
+            post.user_id = current_user.id
+            post.updated = datetime.utcnow
+            post.save_post()
 
     return render_template('post/post.html', form = form)
 
@@ -183,7 +193,7 @@ def post_comment(post_id):
                 flash('Comment must be provided')
                 return redirect(url_for('.view_post', post_id = post.id))
 
-    return render_template('post/comment.html', form = form)
+    return render_template('post/comment.html', form = form, post = post)
 
 
 @main.route('/post/comment/delete/<post_id>')
@@ -197,7 +207,9 @@ def delete_comment(post_id):
     if user is None:
         abort(404)
     
-    if user.user_role == 'user':
+    if user.role == 'user':
+        flash('Only Writers can delete comments on posts')
+        return redirect(url_for('main.index'))
         abort(404)
 
     comment.delete_comment()
@@ -209,5 +221,6 @@ def view_post(post_id):
     '''Function to view a specific post'''
     post = BlogPost.query.filter_by(id = post_id).first()
     comments = Comment.query.filter_by(post_id = post_id).all()
+    user = BlogPost.query.filter_by(user_id = post.user_id).first()
 
-    return render_template('post/specific_post.html', comments = comments, post = post)
+    return render_template('post/specific_post.html', comments = comments, post = post, user = user)

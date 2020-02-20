@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.String())
     profile_pic_path = db.Column(db.String())
     subscribed = db.Column(db.Boolean, default = False, nullable = False)
-    role = db.Column(db.String, default='user', nullable = False)
+    role = db.Column(db.String, nullable = False)
     blogs = db.relationship('BlogPost', backref='user', lazy = 'dynamic')
     password = db.Column(db.String(), nullable = False)
 

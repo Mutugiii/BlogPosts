@@ -28,6 +28,8 @@
             <br>
             <span><a style="color: black;"
                     href="{{url_for('main.profile', uname = current_user.username)}}">Profile</a></span>
+            <span style="margin-right: 7px;"></span> | <span style="margin-right: 7px;"></span>
+            <span><a style="color: black;" href="{{url_for('auth.logout')}}">Log out</a></span>
             {% else %}
             <br>
             <span><a style="color: black;" href="{{url_for('auth.login')}}">Login</a></span>

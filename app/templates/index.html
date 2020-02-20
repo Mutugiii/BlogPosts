@@ -13,7 +13,57 @@
     By {{quotes.author}}
 </div>
 <div class="container">
-    {{macro.displayLatest(latest)}}
-    {{macro.displayPosts(all)}}
+    <br>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-danger">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+    <br>
+    <img src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+        width="1100px" height="500px">
+
+    {% if user.role == 'writer' %}
+    <div style="text-align: center;">
+        <a href="{{url_for('main.new_post', uname = current_user.username)}}">
+            <input type="submit" value="Submit a Pitch" class="btn btn-outline-primary">
+        </a>
+    </div>
+    {% endif %}
+    
+    <div class="container">
+        {% for post in all %}
+        <div class="container">
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            {% if post.post_pic_path %}
+            <img class='card-img-top' src="{{url_for('static', filename=post.post_pic_path)}}" height="200px">
+            {% else %}
+            <img class='card-img-top'
+                src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+            {% endif %}
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <h5>{{post.title}}</h5>
+            <span >Author: {{post.user.username}}</span>
+            <br>
+            <small >Posted {{moment(post.posted).fromNow()}}</small>
+            <p >{{post.content | truncate(1000)}}</p>
+            <br>
+            <div class="row" style="color: #2b3137;">
+                <div class="col-md-8">
+                    <a  href="{{url_for('main.post_comment', post_id = post.id)}}">Add
+                        Comment</a>
+                </div>
+                <div class="col-md-4">
+                    <a  href="{{url_for('main.view_post', post_id = post.id)}}">View
+                        details</a>
+                </div>
+            </div>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+        </div>
+    </div>
+    {% endfor %}
+
 </div>
 {% endblock %}

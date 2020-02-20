@@ -27,14 +27,14 @@ class DevConfig(Config):
     Class for dev configurations
     '''
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://mutugi:Mutugi@localhost/blog'
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
 
 class ProdConfig(Config):
     '''
     Class for production environment configurations
     '''
-    pass
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 
 class TestConfig(Config):
     '''

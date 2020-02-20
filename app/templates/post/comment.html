@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Comment</title>
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="container" style="font-size: 1.4rem;">
+    <div class="container row">
+        <div class="container row">
+            <div class="col-md-4">
+                {% if post.post_pic_path %}
+                <img src="{{url_for('static', filename=post.post_pic_path)}}">
+                {% else %}
+                <img
+                    src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h4>{{post.title}}</h4>
+                <small>{{post.user.username}}</small>
+                <small>Posted {{moment(post.posted).fromNow()}}</small>
+                {% if post.updated %}
+                <small>Last Updated {{moment(post.updated).fromNow()}}</small>
+                {% endif %}
+                <p>{{post.content | truncate(1000)}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<hr style="height:1px;border:none;color:#333;background-color:#333;" />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-4">
+            <div class="container-fluid">
+                {% for message in get_flashed_messages() %}
+                <div class="alert alert-danger">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                <form action="{{url_for('main.post_comment', post_id = post.id)}}" method="POST">
+                    {{form.csrf_token(type_ ='hidden')}}
+                    <div class="form-group">
+                        {% if form.content.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <span class="error">
+                                {% for error in errors %}
+                                {{error}}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {{form.content.label}}:
+                        {{form.content(class_ = 'form-control')}}
+                    </div>
+                    <div class="form-group">
+                        {{form.submit(class_ = 'btn btn-outline-primary')}}
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+{% endblock %}

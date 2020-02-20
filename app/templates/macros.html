@@ -31,7 +31,6 @@
 {% macro displayPosts(posts) %}
 {% for post in posts %}
 <div class="container">
-    <div class="col-md-3">
         <div class="card" style="width: 18rem;">
             {% if post.post_pic_path %}
             <img  class='card-img-top' src="{{url_for('static', filename=post.post_pic_path)}}">
@@ -45,7 +44,6 @@
                 <small class="card-text">Posted {{moment(post.posted).fromNow()}}</small>
                 <p class="card-text">{{post.content | truncate(1000)}}</p>
             </div>
-        </div>
     </div>
 </div>
 {% endfor %}
