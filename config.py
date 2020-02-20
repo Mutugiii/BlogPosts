@@ -40,10 +40,10 @@ class TestConfig(Config):
     '''
     Class with configurations for test environment
     '''
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://mutugu:Mutugi@localhost/blog_test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://mutugi:Mutugi@localhost/blog_test'
 
 config_options = {
     'development': DevConfig,
     'production': ProdConfig,
-    'Testing': TestConfig
+    'test': TestConfig
 }
