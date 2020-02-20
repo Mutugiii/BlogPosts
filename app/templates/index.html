@@ -41,6 +41,7 @@
                 height="200px" width="500px">
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
             <h5>{{post.title}}</h5>
+            <br>
             <div class="row">
                 <span class="col-md-8">Author: {{post.user.username}}</span>
                 <br>
@@ -48,10 +49,6 @@
             </div>
             <p>{{post.content}}</p>
             <br>
-            <small class="col-md-4">Posted {{post.posted}}</small>
-        </div>
-        <p>{{post.content | truncate(1000)}}</p>
-        <br>
         <div class="row" style="color: #2b3137;">
             <div class="col-md-8">
                 <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
