@@ -3,7 +3,7 @@
 # Microblog
 
 ## Description
-This is a python flask crud web app that allows a user to sign up and post, view and provide feedback on various Microbloges that are posted by other users
+This is a python flask crud web app that allows a user to sign up and post, view and provide feedback on various Microblog that are posted by other users
 
 ## Author
 
@@ -11,21 +11,32 @@ This is a python flask crud web app that allows a user to sign up and post, view
 [**Mutugi**](https://github.com/mutugiii)
 
 ## Features
-- Log in and Sign up
+- Log in and Sign up - User and Writer
 - Welcome Mail
-- Create Microblog
+- Subscription Mail
+- Create Blog
 - Update Profile
+- Writer Delete and Update blog post
 
 ## User Stories 
 As a user of the web application you will be able to:
 
-1. View Microbloges based on categories
+1. View Microblog based on categories
 2. Sign up and log in
 3. Receive welcome mail
-4. Add a Microblog based on category
+4. Subscribe to a mailing list
 5. Comment on a Microblog and view other comments
-6. Edit user profile: View all your posted Microbloges; Update bio and profile image
+6. Edit user profile: View all your posted Microblog; Update bio and profile image
 
+As a Writer I will be able to
+1. View Microblog based on categories
+2. Sign up and log in
+3. Receive welcome mail
+4. Add a Microblog 
+5. Comment on a Microblog and view other comments
+6. Edit user profile: View all your posted Microblog; Update bio and profile image
+7. Delete a blog post
+8. Update a blog post
 
 ## Getting started
 ### Prerequisites
