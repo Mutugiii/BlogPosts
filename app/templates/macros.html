@@ -15,6 +15,9 @@
                 <h4>{{post.title}}</h4>
                 <small>{{post.user.username}}</small>
                 <small>Posted {{moment(post.posted).fromNow()}}</small>
+                {% if post.updated %}
+                <small>Last Updated {{moment(post.updated).fromNow()}}</small>
+                {% endif %}
                 <p>{{post.content | truncate(1000)}}</p>
             </div>
         </div>

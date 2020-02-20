@@ -65,7 +65,7 @@ def update_picture(uname):
         path = f'photos/{filename}'
         user.profile_pic_path = path
         user.save()
-    return redirect(url_for('main.profile',uname = uname))
+    return redirect(url_for('.profile',uname = uname))
 
 @main.route('/subscribe/<email>')
 @login_required
