@@ -49,13 +49,6 @@
             </div>
             <p>{{post.content}}</p>
             <br>
-        <div class="row" style="color: #2b3137;">
-            <div class="col-md-8">
-                <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
-                    Comment</a>
-            </div>
-            <p>{{post.content | truncate(1000)}}</p>
-            <br>
             <div class="row" style="color: #2b3137;">
                 <div class="col-md-8">
                     <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
@@ -67,9 +60,8 @@
                 </div>
             </div>
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-
 </div>
 {% endblock %}

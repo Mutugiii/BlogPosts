@@ -9,22 +9,14 @@
 <div class="container" style="font-size: 1.4rem;">
     <div class="container row">
         <div class="container row">
-            <div class="col-md-4">
-                {% if post.post_pic_path %}
-                <img src="{{url_for('static', filename=post.post_pic_path)}}">
-                {% else %}
-                <img
-                    src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-                {% endif %}
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <h4>{{post.title}}</h4>
                 <small>{{post.user.username}}</small>
-                <small>Posted {{moment(post.posted).fromNow()}}</small>
+                <small>Posted {{post.posted)}}</small>
                 {% if post.updated %}
-                <small>Last Updated {{moment(post.updated).fromNow()}}</small>
+                <small>Last Updated {{post.updated}}</small>
                 {% endif %}
-                <p>{{post.content | truncate(1000)}}</p>
+                <p>{{post.content}}</p>
             </div>
         </div>
     </div>
