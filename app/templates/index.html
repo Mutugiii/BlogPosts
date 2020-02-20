@@ -25,13 +25,12 @@
     <img src="https://images.pexels.com/photos/733856/pexels-photo-733856.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
         width="1100px" height="500px">
 
-    {% if user.role == 'writer' %}
+   
     <div style="text-align: center;">
         <a href="{{url_for('main.new_post', uname = current_user.username)}}">
             <input type="submit" value="Submit a Pitch" class="btn btn-outline-primary">
         </a>
     </div>
-    {% endif %}
     
     <div class="container">
         {% for post in all %}
@@ -47,7 +46,7 @@
             <h5>{{post.title}}</h5>
             <span >Author: {{post.user.username}}</span>
             <br>
-            <small >Posted {{moment(post.posted).fromNow()}}</small>
+            <small >Posted {{moment(post.posted).format('LLLL')}}</small>
             <p >{{post.content | truncate(1000)}}</p>
             <br>
             <div class="row" style="color: #2b3137;">

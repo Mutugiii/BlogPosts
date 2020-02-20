@@ -1,5 +1,5 @@
 Hey there {{user.username}}
 
 We have good news for you. A new blog has been posted
-Log in to check out the latest post, {{blog.title}} by {{blog.user.username}}
+Log in to check out the latest post, {{blog.title}}
 

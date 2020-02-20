@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}
+{{super()}}
 <title>Post</title>
+{{ moment.include_moment() }}
 {% endblock %}
 
 {% block content %}
@@ -21,12 +23,12 @@
                         {% endif %}
                         <br>
                         <h5 class="card-title">{{post.title}}</h5>
-                        <small class="card-text">Author: {{post.user.username}}</small>
+                        <span class="card-text">Author: {{post.user.username}}</span>
                         <br>
                         <small class="card-text">Posted {{moment(post.posted).fromNow()}}</small>
                         <p class="card-text">{{post.content | truncate(1000)}}</p>
                         <br>
-                        {% if user.role == 'writer' %}
+                        
                         <div class="row" style="color: #2b3137;">
                             <div class="col-md-6">
                                 <a class="card-text" href="{{url_for('main.update_post', post_id = post.id)}}">
@@ -37,7 +39,15 @@
                                     <input type="submit" class="btn btn-outline-primary" value="Delete Post"></a>
                             </div>
                         </div>
-                        {% endif %}
+                        
+                        <hr>
+                        <h5>Comments</h5>
+                        <div class="container">
+                            {% for comment in comments %}
+                            <p>{{comment.content}}</p>
+                            <p>{{moment(comment.posted).calendar()}}</p>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -13,7 +13,7 @@ def index():
     '''Main index route'''
     quotes = get_quote()
     latest_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).first()
-    all_blogs = BlogPost.query.all()
+    all_blogs = BlogPost.query.order_by(db.desc(BlogPost.posted)).all()
     user = BlogPost.query.filter_by(user_id = latest_blogs.user_id).first()
     return render_template('index.html', quotes = quotes, latest = latest_blogs, all = all_blogs, user = user)
 
@@ -112,9 +112,11 @@ def new_post(uname):
             blog = BlogPost(title = form.title.data, content = form.blogcontent.data, post_pic_path = path, user_id = current_user.id)
             blog.save_post()
 
-            if user.subscribed == True:
-                blog = BlogPost.query.filter_by(user_id = user.id).first()
-                mailer('New Post Notification!!!', 'email/notification', user.email, user = user, blog = blog)
+            users = User.query.all()
+            for user in users:
+                if user.subscribed == True:
+                    blog = BlogPost.query.filter_by(user_id = user.id).first()
+                    mailer('New Post Notification!!!', 'email/notification', user.email, user = user, blog = blog)
 
             return redirect(url_for('.index'))
     return render_template('post/post.html', form = form)
@@ -188,10 +190,13 @@ def post_comment(post_id):
     if form.validate_on_submit():
         if request.method == 'POST':
             comment_form = request.form
-            form_content = comment_form.Content
+            form_content = comment_form.get('content')
             if not form_content:
                 flash('Comment must be provided')
                 return redirect(url_for('.view_post', post_id = post.id))
+            comment = Comment(content = form.content.data, post_id = post_id)
+            comment.save_comment()
+            return redirect(url_for('.view_post', post_id = post_id))
 
     return render_template('post/comment.html', form = form, post = post)
 
