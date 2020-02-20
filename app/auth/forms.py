@@ -14,7 +14,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators = [Required(), EqualTo('password_confirmation', message= 'Passwords must match'), Length(min=6)])
     password_confirmation = PasswordField('Confirm Password', validators = [Required(), Length(min=6)])
     user_role = SelectField('Sign up as', choices=[('user','User'), ('writer','Writer')], validators=[Required()])
-    
+    recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
 
     def validate_email(self,data_field):
