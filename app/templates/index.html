@@ -33,8 +33,6 @@
     </div>
     {% endif %}
 
-<div class="container">
-    {% for post in all %}
     <div class="container">
         {% for post in all %}
         <div class="container">
@@ -59,13 +57,22 @@
                 <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
                     Comment</a>
             </div>
-            <div class="col-md-4">
-                <a href="{{url_for('main.view_post', post_id = post.id)}}">View
-                    details</a>
+            <p>{{post.content | truncate(1000)}}</p>
+            <br>
+            <div class="row" style="color: #2b3137;">
+                <div class="col-md-8">
+                    <a href="{{url_for('main.post_comment', post_id = post.id)}}">Add
+                        Comment</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{url_for('main.view_post', post_id = post.id)}}">View
+                        details</a>
+                </div>
             </div>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
         </div>
-        <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+        {% endfor %}
     </div>
+
 </div>
-{% endfor %}
 {% endblock %}
